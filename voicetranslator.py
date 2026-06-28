@@ -21,7 +21,7 @@ st.markdown("""
 st.markdown('<p class="title">✈️ Universal Tour Translator</p>', unsafe_allow_html=True)
 st.write("---")
 
-# భాషల లిస్ట్ (మైక్రోసాఫ్ట్ ఎడ్జ్ మరియు గూగుల్ సపోర్ట్ తో)
+# భాషల లిస్ట్ (సరిచేసిన సింటాక్స్ తో)
 languages = {
     "Telugu (తెలుగు)": {"code": "te", "tts_method": "gtts", "tts_code": "te"},
     "English": {"code": "en", "tts_method": "gtts", "tts_code": "en"},
@@ -29,18 +29,17 @@ languages = {
     "Hindi (हिन्दी)": {"code": "hi", "tts_method": "gtts", "tts_code": "hi"},
     "Odia (ଓଡ଼ିଆ)": {"code": "or", "tts_method": "edge", "tts_code": "or-IN-SubhasiniNeural"},
     "Kannada (ಕನ್ನಡ)": {"code": "kn", "tts_method": "gtts", "tts_code": "kn"},
-    "Malayalam (മലയാളം)": {"code": "ml", "tts_method": "gtts", "tts_code": "ml"},
+    "Malayalam (മലയാളం)": {"code": "ml", "tts_method": "gtts", "tts_code": "ml"},
     "Marathi (మరాठी)": {"code": "mr", "tts_method": "gtts", "tts_code": "mr"},
     "Bengali (বাংলা)": {"code": "bn", "tts_method": "gtts", "tts_code": "bn"},
     "French": {"code": "fr", "tts_method": "gtts", "tts_code": "fr"},
-    "Japanese": {"code": "ja", "tts_method": "gtts", "tts_code": "ja"}
+    "Japanese": {"code": "ja", "tts_method": "gtts", "tts_code": "ja"},  # ఇక్కడ కామా పెట్టాం
     "Chinese (Mandarin)": {"code": "zh-CN", "tts_method": "gtts", "tts_code": "zh-CN"},
     "Russian (రష్యన్)": {"code": "ru", "tts_method": "gtts", "tts_code": "ru"},
     "Ukrainian (ఉక్రేనియన్)": {"code": "uk", "tts_method": "gtts", "tts_code": "uk"},
     "Mongolian (మంగోలియన్)": {"code": "mn", "tts_method": "gtts", "tts_code": "mn"},
     "Korean (కొరియన్)": {"code": "ko", "tts_method": "gtts", "tts_code": "ko"}
-}
-}
+} # ఇక్కడ ఎక్స్‌ట్రా బ్రాకెట్ తీసేశాం
 
 col_lang1, col_lang2 = st.columns(2)
 with col_lang1:
@@ -71,16 +70,14 @@ if st.button("🔄 Translate (అనువదించు)", use_container_width
                 st.markdown(f"<div class='user-box'><b>నువ్వు చెప్పింది:</b><br>{user_input}</div>", unsafe_allow_html=True)
                 st.markdown(f"<div class='reply-box'><b>అనువాదం ({tour_lang}):</b><br>{translated}</div>", unsafe_allow_html=True)
                 
-                # 2. ప్రతిసారీ కొత్త ఆడియో ఫైల్ క్రియేట్ చేయడం (క్యాచీ సమస్య రాకుండా)
+                # 2. ప్రతిసారీ కొత్త ఆడియో ఫైల్ క్రియేట్ చేయడం
                 unique_id = int(time.time())
                 out_filename = f"trans_out_{unique_id}.mp3"
                 
                 try:
                     if lang2_data["tts_method"] == "edge":
-                        # ఓడియా కోసం మైక్రోసాఫ్ట్ ఎడ్జ్ వాయిస్
                         asyncio.run(amake_edge_tts(translated, lang2_data["tts_code"], out_filename))
                     else:
-                        # మిగతా భాషల కోసం గూగుల్ వాయిస్
                         tts = gTTS(text=translated, lang=lang2_data["tts_code"])
                         tts.save(out_filename)
                     
