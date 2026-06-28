@@ -18,15 +18,16 @@ st.markdown("""
 st.markdown('<p class="title">✈️ Universal Tour Translator</p>', unsafe_allow_html=True)
 st.write("---")
 
-# సపోర్ట్ చేసే భాషల లిస్ట్
+# సపోర్ట్ చేసే భాషల లిస్ట్ (Odia/Oriya యాడ్ చేయబడింది)
 languages = {
     "Telugu (తెలుగు)": {"code": "te", "tts_code": "te"},
     "English": {"code": "en", "tts_code": "en"},
     "Tamil (தமிழ்)": {"code": "ta", "tts_code": "ta"},
     "Hindi (हिन्दी)": {"code": "hi", "tts_code": "hi"},
+    "Odia (ଓଡ଼ିଆ)": {"code": "or", "tts_code": "or"},  # <-- ఒడిశా భాష ఇక్కడ యాడ్ అయింది
     "Kannada (ಕನ್ನಡ)": {"code": "kn", "tts_code": "kn"},
-    "Malayalam (മലയാളం)": {"code": "ml", "tts_code": "ml"},
-    "Marathi (मరాఠీ)": {"code": "mr", "tts_code": "mr"},
+    "Malayalam (മലയാളം)": {"code": "ml", "tts_code": "ml"},
+    "Marathi (मраठी)": {"code": "mr", "tts_code": "mr"},
     "Bengali (বাংলা)": {"code": "bn", "tts_code": "bn"},
     "French": {"code": "fr", "tts_code": "fr"},
     "Japanese": {"code": "ja", "tts_code": "ja"}
@@ -36,36 +37,30 @@ col_lang1, col_lang2 = st.columns(2)
 with col_lang1:
     my_lang = st.selectbox("🙋‍♂️ నీ భాష (Your Language):", list(languages.keys()), index=0)
 with col_lang2:
-    tour_lang = st.selectbox("🗺️ ప్రాంతీయ భాష (Local Language):", list(languages.keys()), index=1)
+    tour_lang = st.selectbox("🗺️ ప్రాంతీయ భాష (Local Language):", list(languages.keys()), index=4) # Default గా Odia కి సెట్ చేశా
 
 lang1_data = languages[my_lang]
 lang2_data = languages[tour_lang]
 
-# టెక్స్ట్ బేస్డ్ ట్రాన్స్లేషన్ (మొబైల్ లో వాయిస్ టైపింగ్ కూడా వాడుకోవచ్చు)
+# టెక్స్ట్ బేస్డ్ ట్రాన్స్లేషన్
 st.write("### ✍️ Type or Use Voice Typing")
-user_input = st.text_input(f"{my_lang} లో ఇక్కడ రాయండి (లేదా కీబోర్డ్ మైక్ వాడండి):", key="user_text_in")
+user_input = st.text_input(f"{my_lang} లో ఇక్కడ రాయండి (లేదా కీబోర్డ్ మైక్ వాడండి):")
 
-# ప్రత్యేకంగా అనువదించు బటన్
-if st.button("🔄 Translate (అనువదించు)", type="primary", use_container_width=True):
-    if user_input:
-        with st.spinner("ట్రాన్స్‌లేట్ అవుతోంది..."):
-            translated = GoogleTranslator(source=lang1_data["code"], target=lang2_data["code"]).translate(user_input)
-            st.markdown(f"<div class='reply-box'><b>అనువాదం ({tour_lang}):</b><br>{translated}</div>", unsafe_allow_html=True)
-            
-            # ఆడియో ప్లే చేయడం
-            tts = gTTS(text=translated, lang=lang2_data["tts_code"])
-            tts.save("trans_out.mp3")
-            st.audio("trans_out.mp3", format="audio/mp3", autoplay=True)
-    else:
-        st.warning("దయచేసి పైన ఏదైనా టైప్ చేయండి లేదా మాట్లాడండి!")
+if user_input:
+    translated = GoogleTranslator(source=lang1_data["code"], target=lang2_data["code"]).translate(user_input)
+    st.markdown(f"<div class='reply-box'><b>అనువాదం ({tour_lang}):</b><br>{translated}</div>", unsafe_allow_html=True)
+    
+    # ఆడియో ప్లే చేయడం
+    tts = gTTS(text=translated, lang=lang2_data["tts_code"])
+    tts.save("trans_out.mp3")
+    st.audio("trans_out.mp3", format="audio/mp3", autoplay=True)
 
 st.write("---")
 st.write("### 🎤 Direct Audio Recorder (Beta)")
 st.write("కింది మైక్ గుర్తుపై క్లిక్ చేసి మాట్లాడండి:")
 
-# మొబైల్ బ్రౌజర్ లో రికార్డ్ చేయడానికి కాంపోనెంట్
 audio_bytes = audio_recorder(text="క్లిక్ చేసి మాట్లాడండి", recording_color="#e74c3c", neutral_color="#95a5a6")
 
 if audio_bytes:
     st.audio(audio_bytes, format="audio/wav")
-    st.info("గమనిక: క్లౌడ్ సర్వర్ లో ఆడియో నుండి టెక్స్ట్ మార్చడానికి 'SpeechRecognition' మొబైల్ బ్రౌజర్ లలో ఒక్కోసారి సెక్యూరిటీ వల్ల ఆగవచ్చు, అందుకే పైన ఉన్న టెక్స్ట్ బాక్స్/キーボード మైక్ ఆప్షన్ మోర్ రిలయబుల్ గా పనిచేస్తుంది.")
+    st.info("గమనిక: క్లౌడ్ సర్వర్ లో ఆడియో నుండి టెక్స్ట్ మార్చడానికి 'SpeechRecognition' మొబైల్ బ్రౌజర్ లలో ఒక్కోసారి సెక్యూరిటీ వల్ల ఆగవచ్చు, అందుకే పైన ఉన్న టెక్స్ట్ బాక్స్/కీబోర్డ్ మైక్ ఆప్షన్ మోర్ రిలయబుల్ గా పనిచేస్తుంది.")
