@@ -5,8 +5,9 @@ from gtts import gTTS
 import asyncio
 import edge_tts
 import os
+import time
 
-# mobile settings
+# మొబైల్ వ్యూ సెట్టింగ్స్
 st.set_page_config(page_title="Universal Tour Translator", page_icon="✈️", layout="centered")
 
 st.markdown("""
@@ -20,13 +21,13 @@ st.markdown("""
 st.markdown('<p class="title">✈️ Universal Tour Translator</p>', unsafe_allow_html=True)
 st.write("---")
 
-# Languages list with Microsoft Edge Voice tags
+# భాషల లిస్ట్ (మైక్రోసాఫ్ట్ ఎడ్జ్ మరియు గూగుల్ సపోర్ట్ తో)
 languages = {
     "Telugu (తెలుగు)": {"code": "te", "tts_method": "gtts", "tts_code": "te"},
     "English": {"code": "en", "tts_method": "gtts", "tts_code": "en"},
     "Tamil (தமிழ்)": {"code": "ta", "tts_method": "gtts", "tts_code": "ta"},
     "Hindi (हिन्दी)": {"code": "hi", "tts_method": "gtts", "tts_code": "hi"},
-    "Odia (ଓଡ଼ିଆ)": {"code": "or", "tts_method": "edge", "tts_code": "or-IN-SubhasiniNeural"}, # Edge Voice
+    "Odia (ଓଡ଼ିଆ)": {"code": "or", "tts_method": "edge", "tts_code": "or-IN-SubhasiniNeural"},
     "Kannada (ಕನ್ನಡ)": {"code": "kn", "tts_method": "gtts", "tts_code": "kn"},
     "Malayalam (മലയാളം)": {"code": "ml", "tts_method": "gtts", "tts_code": "ml"},
     "Marathi (మరాठी)": {"code": "mr", "tts_method": "gtts", "tts_code": "mr"},
@@ -57,28 +58,34 @@ if st.button("🔄 Translate (అనువదించు)", use_container_width
     if user_input:
         with st.spinner("అనువదిస్తోంది..."):
             try:
+                # 1. అనువాదం
                 translated = GoogleTranslator(source=lang1_data["code"], target=lang2_data["code"]).translate(user_input)
                 
+                # స్క్రీన్ పై టెక్స్ట్ చూపించడం
                 st.markdown(f"<div class='user-box'><b>నువ్వు చెప్పింది:</b><br>{user_input}</div>", unsafe_allow_html=True)
                 st.markdown(f"<div class='reply-box'><b>అనువాదం ({tour_lang}):</b><br>{translated}</div>", unsafe_allow_html=True)
                 
-                # Audio Generation
+                # 2. ప్రతిసారీ కొత్త ఆడియో ఫైల్ క్రియేట్ చేయడం (క్యాచీ సమస్య రాకుండా)
+                unique_id = int(time.time())
+                out_filename = f"trans_out_{unique_id}.mp3"
+                
                 try:
-                    out_filename = "trans_out.mp3"
                     if lang2_data["tts_method"] == "edge":
-                        # Microsoft Edge TTS for Odia
+                        # ఓడియా కోసం మైక్రోసాఫ్ట్ ఎడ్జ్ వాయిస్
                         asyncio.run(amake_edge_tts(translated, lang2_data["tts_code"], out_filename))
-                        st.audio(out_filename, format="audio/mp3", autoplay=True)
                     else:
-                        # Google TTS for other languages
+                        # మిగతా భాషల కోసం గూగుల్ వాయిస్
                         tts = gTTS(text=translated, lang=lang2_data["tts_code"])
                         tts.save(out_filename)
-                        st.audio(out_filename, format="audio/mp3", autoplay=True)
+                    
+                    # ఆడియో ప్లే చేయడం
+                    st.audio(out_filename, format="audio/mp3", autoplay=True)
+                    
                 except Exception as audio_err:
                     st.warning("ఈ భాషకి ఆడియో ప్లే చేయడంలో చిన్న సమస్య వచ్చింది. పైన టెక్స్ట్ చూడవచ్చు.")
                     
             except Exception as e:
-                st.error(f"అనువాదంలో समस्या వచ్చింది: {e}")
+                st.error(f"అనువాదంలో సమస్య వచ్చింది: {e}")
     else:
         st.warning("⚠️ ముందు పైన ఉన్న బాక్స్ లో ఏదైనా టైప్ చేయండి!")
 
