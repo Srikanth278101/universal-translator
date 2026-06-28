@@ -18,16 +18,16 @@ st.markdown("""
 st.markdown('<p class="title">✈️ Universal Tour Translator</p>', unsafe_allow_html=True)
 st.write("---")
 
-# సపోర్ట్ చేసే భాషల లిస్ట్ (Odia యాడ్ చేయబడింది)
+# సపోర్ట్ చేసే భాషల లిస్ట్ (Odia వాయిస్ కోడ్ ఫిక్స్ చేయబడింది)
 languages = {
     "Telugu (తెలుగు)": {"code": "te", "tts_code": "te"},
     "English": {"code": "en", "tts_code": "en"},
     "Tamil (தமிழ்)": {"code": "ta", "tts_code": "ta"},
     "Hindi (हिन्दी)": {"code": "hi", "tts_code": "hi"},
-    "Odia (ଓଡ଼ିଆ)": {"code": "or", "tts_code": "or"},  # <-- ఓడియా లాంగ్వేజ్ కోడ్
+    "Odia (ଓଡ଼ିଆ)": {"code": "or", "tts_code": "or-IN"},  # <-- ఇక్కడ or-IN గా మార్చాను
     "Kannada (ಕನ್ನಡ)": {"code": "kn", "tts_code": "kn"},
     "Malayalam (മലയാളം)": {"code": "ml", "tts_code": "ml"},
-    "Marathi (मराठी)": {"code": "mr", "tts_code": "mr"},
+    "Marathi (మరాठी)": {"code": "mr", "tts_code": "mr"},
     "Bengali (বাংলা)": {"code": "bn", "tts_code": "bn"},
     "French": {"code": "fr", "tts_code": "fr"},
     "Japanese": {"code": "ja", "tts_code": "ja"}
@@ -47,13 +47,21 @@ st.write("### ✍️ Type or Use Voice Typing")
 user_input = st.text_input(f"{my_lang} లో ఇక్కడ రాయండి (లేదా కీబోర్డ్ మైక్ వాడండి):")
 
 if user_input:
-    translated = GoogleTranslator(source=lang1_data["code"], target=lang2_data["code"]).translate(user_input)
-    st.markdown(f"<div class='reply-box'><b>అనువాదం ({tour_lang}):</b><br>{translated}</div>", unsafe_allow_html=True)
-    
-    # ఆడియో ప్లే చేయడం
-    tts = gTTS(text=translated, lang=lang2_data["tts_code"])
-    tts.save("trans_out.mp3")
-    st.audio("trans_out.mp3", format="audio/mp3", autoplay=True)
+    try:
+        # అనువాదం చేయడం
+        translated = GoogleTranslator(source=lang1_data["code"], target=lang2_data["code"]).translate(user_input)
+        st.markdown(f"<div class='reply-box'><b>అనువాదం ({tour_lang}):</b><br>{translated}</div>", unsafe_allow_html=True)
+        
+        # ఆడియో ప్లే చేయడానికి ట్రై చేయడం
+        try:
+            tts = gTTS(text=translated, lang=lang2_data["tts_code"])
+            tts.save("trans_out.mp3")
+            st.audio("trans_out.mp3", format="audio/mp3", autoplay=True)
+        except Exception as audio_err:
+            st.warning("ఈ భాషకి వాయిస్ సపోర్ట్ లేదు, కానీ పైన అనువాదం (Text) చూడవచ్చు.")
+            
+    except Exception as e:
+        st.error(f"అనువాదంలో సమస్య వచ్చింది: {e}")
 
 st.write("---")
 st.write("### 🎤 Direct Audio Recorder (Beta)")
