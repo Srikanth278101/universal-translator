@@ -4,7 +4,7 @@ from deep_translator import GoogleTranslator
 from gtts import gTTS
 import os
 
-# మొబైల్ వ్యూ సెట్టింగ్స్
+# మొబైల్ వ్యూ సెッティングస్
 st.set_page_config(page_title="Universal Tour Translator", page_icon="✈️", layout="centered")
 
 st.markdown("""
@@ -18,16 +18,16 @@ st.markdown("""
 st.markdown('<p class="title">✈️ Universal Tour Translator</p>', unsafe_allow_html=True)
 st.write("---")
 
-# సపోర్ట్ చేసే భాషల లిస్ట్ (Odia వాయిస్ కోడ్ ఫిక్స్ చేయబడింది)
+# సపోర్ట్ చేసే భాషల పూర్తి లిస్ట్ (Odia వాయిస్ కోడ్ ఫిక్స్ చేయబడింది)
 languages = {
     "Telugu (తెలుగు)": {"code": "te", "tts_code": "te"},
     "English": {"code": "en", "tts_code": "en"},
     "Tamil (தமிழ்)": {"code": "ta", "tts_code": "ta"},
     "Hindi (हिन्दी)": {"code": "hi", "tts_code": "hi"},
-    "Odia (ଓଡ଼ିଆ)": {"code": "or", "tts_code": "or-IN"},  # <-- ఇక్కడ or-IN గా మార్చాను
+    "Odia (ଓଡ଼ିଆ)": {"code": "or", "tts_code": "or-IN"},
     "Kannada (ಕನ್ನಡ)": {"code": "kn", "tts_code": "kn"},
     "Malayalam (മലയാളം)": {"code": "ml", "tts_code": "ml"},
-    "Marathi (మరాठी)": {"code": "mr", "tts_code": "mr"},
+    "Marathi (मराठी)": {"code": "mr", "tts_code": "mr"},
     "Bengali (বাংলা)": {"code": "bn", "tts_code": "bn"},
     "French": {"code": "fr", "tts_code": "fr"},
     "Japanese": {"code": "ja", "tts_code": "ja"}
@@ -42,26 +42,36 @@ with col_lang2:
 lang1_data = languages[my_lang]
 lang2_data = languages[tour_lang]
 
-# టెక్స్ట్ బేస్డ్ ట్రాన్స్లేషన్
-st.write("### ✍️ Type or Use Voice Typing")
-user_input = st.text_input(f"{my_lang} లో ఇక్కడ రాయండి (లేదా కీబోర్డ్ మైక్ వాడండి):")
+st.write("---")
 
-if user_input:
-    try:
-        # అనువాదం చేయడం
-        translated = GoogleTranslator(source=lang1_data["code"], target=lang2_data["code"]).translate(user_input)
-        st.markdown(f"<div class='reply-box'><b>అనువాదం ({tour_lang}):</b><br>{translated}</div>", unsafe_allow_html=True)
-        
-        # ఆడియో ప్లే చేయడానికి ట్రై చేయడం
-        try:
-            tts = gTTS(text=translated, lang=lang2_data["tts_code"])
-            tts.save("trans_out.mp3")
-            st.audio("trans_out.mp3", format="audio/mp3", autoplay=True)
-        except Exception as audio_err:
-            st.warning("ఈ భాషకి వాయిస్ సపోర్ట్ లేదు, కానీ పైన అనువాదం (Text) చూడవచ్చు.")
-            
-    except Exception as e:
-        st.error(f"అనువాదంలో సమస్య వచ్చింది: {e}")
+# టెక్స్ట్ అండ్ కీబోర్డ్ మైక్ బేస్డ్ ట్రాన్స్లేషన్
+st.write("### ✍️ Type or Use Voice Typing")
+user_input = st.text_input(f"{my_lang} లో ఇక్కడ రాయండి (లేదా కీబోర్డ్ మైక్ వాడండి):", key="user_text_input")
+
+# ఇక్కడ ప్రత్యేకంగా 'Translate' బటన్ పెట్టాను శ్రీకాంత్
+if st.button("🔄 Translate (అనువదించు)", use_container_width=True, type="primary"):
+    if user_input:
+        with st.spinner("అనువదిస్తోంది..."):
+            try:
+                # 1. గూగుల్ ద్వారా అనువాదం
+                translated = GoogleTranslator(source=lang1_data["code"], target=lang2_data["code"]).translate(user_input)
+                
+                # 2. స్క్రీన్ పైన రిజల్ట్ చూపించడం
+                st.markdown(f"<div class='user-box'><b>నువ్వు చెప్పింది:</b><br>{user_input}</div>", unsafe_allow_html=True)
+                st.markdown(f"<div class='reply-box'><b>అనువాదం ({tour_lang}):</b><br>{translated}</div>", unsafe_allow_html=True)
+                
+                # 3. ఆడియో (వాయిస్) ప్లే చేయడం
+                try:
+                    tts = gTTS(text=translated, lang=lang2_data["tts_code"])
+                    tts.save("trans_out.mp3")
+                    st.audio("trans_out.mp3", format="audio/mp3", autoplay=True)
+                except Exception as audio_err:
+                    st.warning("ఈ భాషకి వాయిస్ (Audio) సపోర్ట్ లేదు, కానీ పైన అనువాదం టెక్స్ట్ చూడవచ్చు.")
+                    
+            except Exception as e:
+                st.error(f"అనువాదంలో సమస్య వచ్చింది: {e}")
+    else:
+        st.warning("⚠️ ముందు పైన ఉన్న బాక్స్ లో ఏదైనా టైప్ చేయండి లేదా నీ మొబైల్ కీబోర్డ్ మైక్ తో మాట్లాడండి!")
 
 st.write("---")
 st.write("### 🎤 Direct Audio Recorder (Beta)")
