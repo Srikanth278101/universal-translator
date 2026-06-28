@@ -34,6 +34,12 @@ languages = {
     "Bengali (বাংলা)": {"code": "bn", "tts_method": "gtts", "tts_code": "bn"},
     "French": {"code": "fr", "tts_method": "gtts", "tts_code": "fr"},
     "Japanese": {"code": "ja", "tts_method": "gtts", "tts_code": "ja"}
+    "Chinese (Mandarin)": {"code": "zh-CN", "tts_method": "gtts", "tts_code": "zh-CN"},
+    "Russian (రష్యన్)": {"code": "ru", "tts_method": "gtts", "tts_code": "ru"},
+    "Ukrainian (ఉక్రేనియన్)": {"code": "uk", "tts_method": "gtts", "tts_code": "uk"},
+    "Mongolian (మంగోలియన్)": {"code": "mn", "tts_method": "gtts", "tts_code": "mn"},
+    "Korean (కొరియన్)": {"code": "ko", "tts_method": "gtts", "tts_code": "ko"}
+}
 }
 
 col_lang1, col_lang2 = st.columns(2)
