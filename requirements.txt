@@ -2,3 +2,4 @@ streamlit
 deep-translator
 gTTS
 audio-recorder-streamlit
+edge-tts
