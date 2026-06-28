@@ -4,7 +4,7 @@ from deep_translator import GoogleTranslator
 from gtts import gTTS
 import os
 
-# మొబైల్ వ్యూ సెッティングస్
+# మొబైల్ వ్యూ సెట్టింగ్స్
 st.set_page_config(page_title="Universal Tour Translator", page_icon="✈️", layout="centered")
 
 st.markdown("""
@@ -18,13 +18,13 @@ st.markdown("""
 st.markdown('<p class="title">✈️ Universal Tour Translator</p>', unsafe_allow_html=True)
 st.write("---")
 
-# సపోర్ట్ చేసే భాషల పూర్తి లిస్ట్ (Odia వాయిస్ కోడ్ ఫిక్స్ చేయబడింది)
+# సపోర్ట్ చేసే భాషల పూర్తి లిస్ట్ (Odia వాయిస్ కోడ్ 'or' గా మార్చబడింది)
 languages = {
     "Telugu (తెలుగు)": {"code": "te", "tts_code": "te"},
     "English": {"code": "en", "tts_code": "en"},
     "Tamil (தமிழ்)": {"code": "ta", "tts_code": "ta"},
     "Hindi (हिन्दी)": {"code": "hi", "tts_code": "hi"},
-    "Odia (ଓଡ଼ିଆ)": {"code": "or", "tts_code": "or-IN"},
+    "Odia (ଓଡ଼ିଆ)": {"code": "or", "tts_code": "or"},  # <-- ఇక్కడ కేవలం 'or' అని మార్చాను శ్రీకాంత్
     "Kannada (ಕನ್ನಡ)": {"code": "kn", "tts_code": "kn"},
     "Malayalam (മലയാളം)": {"code": "ml", "tts_code": "ml"},
     "Marathi (मराठी)": {"code": "mr", "tts_code": "mr"},
@@ -48,7 +48,6 @@ st.write("---")
 st.write("### ✍️ Type or Use Voice Typing")
 user_input = st.text_input(f"{my_lang} లో ఇక్కడ రాయండి (లేదా కీబోర్డ్ మైక్ వాడండి):", key="user_text_input")
 
-# ఇక్కడ ప్రత్యేకంగా 'Translate' బటన్ పెట్టాను శ్రీకాంత్
 if st.button("🔄 Translate (అనువదించు)", use_container_width=True, type="primary"):
     if user_input:
         with st.spinner("అనువదిస్తోంది..."):
